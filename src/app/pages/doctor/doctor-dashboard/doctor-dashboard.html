@@ -1,0 +1,89 @@
+<div class="min-h-screen w-full  flex justify-center items-start py-10 px-4">
+  <div class="w-full max-w-4xl  rounded-lg shadow-lg p-8 space-y-8">
+
+    <!-- Page Title -->
+    <h3 class="text-3xl font-semibold text-indigo-700 text-center">Doctor Dashboard</h3>
+
+    <!-- Availability Card -->
+    <div class="bg-white rounded-lg p-6">
+      <h5 class="text-xl font-semibold text-indigo-600 mb-4">Set Availability</h5>
+      <div class="flex gap-4">
+        <input 
+          class="border border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          [(ngModel)]="availability"
+          [ngModelOptions]="{standalone:true}"
+          placeholder="Mon–Fri 10:00–14:00">
+        <button 
+          class="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 transition"
+          (click)="saveAvailability()">
+          Save
+        </button>
+      </div>
+      <div class="text-green-600 mt-2" *ngIf="msg">{{msg}}</div>
+      <div class="text-red-500 mt-2" *ngIf="err">{{err}}</div>
+    </div>
+
+    <!-- Today’s Appointments -->
+    <div class="bg-white ">
+      <h5 class="text-xl font-semibold text-indigo-600 mb-4">Today’s Appointments</h5>
+      <div class="overflow-x-auto  bg-white rounded-lg border">
+        <table class="min-w-full bg-white border text-left text-gray-700">
+          <thead class="bg-indigo-100 text-indigo-800">
+            <tr>
+              <th class="py-2 px-4 border">Time</th>
+              <th class="py-2 px-4 border">Patient</th>
+              <th class="py-2 px-4 border">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let a of appts; trackBy: trackByAppt"
+                (click)="selectAppt(a)"
+                [class.bg-indigo-50]="selectedAppt && getApptId(selectedAppt) === getApptId(a)"
+                class="cursor-pointer hover:bg-gray-50 transition">
+              <td class="py-2 px-4 border">{{ a.appointment_date | date:'shortTime' }}</td>
+              <td class="py-2 px-4 border">{{ a.patient?.user?.username || a.patient?.username }}</td>
+              <td class="py-2 px-4 border">{{ a.status }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Add Prescription -->
+    <div class="bg-white ">
+      <h3 class="text-xl font-semibold text-indigo-600 mb-4">Add Prescription</h3>
+      <div class="space-y-4">
+
+        <input 
+          class="border border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          [(ngModel)]="appointmentId"
+          [ngModelOptions]="{standalone:true}"
+          placeholder="Appointment ID (click a row above to auto-fill)">
+
+        <textarea 
+          class="border border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          rows="4"
+          [(ngModel)]="doctor_notes"
+          [ngModelOptions]="{standalone:true}"
+          placeholder="Doctor Notes"></textarea>
+
+        <input 
+          class="border border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          [(ngModel)]="medicines"
+          [ngModelOptions]="{standalone:true}"
+          placeholder="Medicines (comma-separated)">
+
+        <button 
+          class="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 transition w-full"
+          (click)="savePrescription()"
+          [disabled]="isSaving">
+          {{ isSaving ? 'Saving…' : 'Save' }}
+        </button>
+
+        <div class="text-green-600 mt-2" *ngIf="msg">{{msg}}</div>
+        <div class="text-red-500 mt-2" *ngIf="err">{{err}}</div>
+      </div>
+    </div>
+
+  </div>
+</div>

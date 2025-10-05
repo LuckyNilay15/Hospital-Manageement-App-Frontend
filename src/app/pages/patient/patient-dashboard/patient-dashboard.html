@@ -1,0 +1,133 @@
+<div class="min-h-screen w-screen flex justify-center items-start py-10 px-4">
+  <div class="w-full max-w-6xl  rounded-lg shadow-lg p-8">
+
+    <h3 class="text-3xl font-semibold text-indigo-700 mb-8 text-center">Patient Dashboard</h3>
+
+    <!-- Find Doctors -->
+    <div class="bg-indigo-50 rounded-lg p-6 mb-10">
+      <h5 class="text-xl font-semibold text-indigo-600 mb-4">Find Doctors</h5>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <input
+          class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          placeholder="Specialization"
+          [(ngModel)]="q.specialization"
+        />
+        <input
+          class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          placeholder="Doctor name"
+          [(ngModel)]="q.name"
+        />
+        <input
+          class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          placeholder="Department Id (optional)"
+          [(ngModel)]="q.department"
+        />
+        <button
+          class="col-span-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition"
+          (click)="search()"
+        >
+          Search
+        </button>
+      </div>
+      <div class="text-red-500 mt-2" *ngIf="err">{{ err }}</div>
+    </div>
+
+    <!-- Two column layout -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+      <!-- Doctors List -->
+      <div class="bg-gray-50 border rounded-lg p-6 overflow-y-auto max-h-[500px]">
+        <h5 class="text-lg font-semibold mb-4 text-indigo-600">Doctors List</h5>
+        <div *ngFor="let d of doctors"
+             class="border-b py-3 cursor-pointer hover:bg-gray-100 transition"
+             (click)="selectDoctor(d._id)">
+          <div class="flex justify-between items-center">
+            <div>
+              <strong>{{ d.user?.username }}</strong>
+              <small *ngIf="d.department"> ({{ d.department.name }})</small>
+            </div>
+            <span class="bg-indigo-100 text-indigo-700 text-sm px-2 py-1 rounded-md">{{ d.specialization }}</span>
+          </div>
+          <small class="text-gray-500">Availability: {{ d.availability || 'N/A' }}</small>
+        </div>
+      </div>
+
+      <!-- Book Appointment -->
+      <div class="bg-gray-50 border rounded-lg p-6">
+        <h5 class="text-lg font-semibold mb-4 text-indigo-600">Book Appointment</h5>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Doctor Id</label>
+            <input
+              class="border border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              [(ngModel)]="book.doctorId"
+              placeholder="Click a doctor on left…"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Date & Time (ISO)</label>
+            <input
+              class="border border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              [(ngModel)]="book.appointment_date"
+              placeholder="2025-10-05T09:30:00.000Z"
+            />
+          </div>
+          <button
+            class="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition w-full"
+            (click)="bookAppt()"
+          >
+            Book
+          </button>
+          <div class="text-green-600 mt-2" *ngIf="msg">{{ msg }}</div>
+          <div class="text-red-500 mt-2" *ngIf="err">{{ err }}</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="my-10 border-gray-300">
+
+    <!-- Appointments -->
+    <h5 class="text-xl font-semibold text-indigo-600 mb-4">My Appointments</h5>
+    <div class="overflow-x-auto bg-white mb-10">
+      <table class="min-w-full border text-left text-gray-700">
+        <thead class="bg-indigo-100 text-indigo-800">
+          <tr>
+            <th class="py-2 px-4 border">Date</th>
+            <th class="py-2 px-4 border">Doctor</th>
+            <th class="py-2 px-4 border">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let a of appts" class="hover:bg-gray-50">
+            <td class="py-2 px-4 border">{{ a.appointment_date | date:'medium' }}</td>
+            <td class="py-2 px-4 border">{{ a.doctor?.user?.username }}</td>
+            <td class="py-2 px-4 border">{{ a.status }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Prescriptions -->
+    <h3 class="text-xl font-semibold text-indigo-600 mb-4">My Prescriptions</h3>
+    <div class="overflow-x-auto bg-white">
+      <table class="min-w-full border text-left text-gray-700">
+        <thead class="bg-indigo-100 text-indigo-800">
+          <tr>
+            <th class="py-2 px-4 border">Appointment</th>
+            <th class="py-2 px-4 border">Doctor Notes</th>
+            <th class="py-2 px-4 border">Medicines</th>
+            <th class="py-2 px-4 border">Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of prescriptions" class="hover:bg-gray-50">
+            <td class="py-2 px-4 border">{{ p.appointment }}</td>
+            <td class="py-2 px-4 border">{{ p.doctor_notes }}</td>
+            <td class="py-2 px-4 border">{{ p.medicines }}</td>
+            <td class="py-2 px-4 border">{{ p.createdAt | date:'short' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
