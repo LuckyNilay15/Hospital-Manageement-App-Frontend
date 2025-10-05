@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'http://localhost:5000/api' // change to your prod URL on deploy
+  apiBaseUrl: 'https://hospital-management-app-backend-v5sb.onrender.com/api' // change to your prod URL on deploy
 };
